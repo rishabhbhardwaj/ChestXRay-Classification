@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from PIL import Image
 
@@ -5,7 +6,7 @@ import numpy as np
 import keras
 
 
-class DataGenerator(keras.utils.Sequence):
+class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
     def __init__(self, train_file, classes, data_dir, batch_size=32, dim=(390 * 320), n_channels=1,
@@ -24,28 +25,21 @@ class DataGenerator(keras.utils.Sequence):
         self.on_epoch_end()
 
     def __len__(self):
-        'Denotes the number of batches per epoch'
         return int(np.floor(len(self.train_df.shape[0]) / self.batch_size))
 
     def __getitem__(self, index):
-        'Generate one batch of data'
-        # Generate indexes of the batch
         indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
         curr_batch = self.train_df.iloc[indexes]
-        # Generate data
         X, y = self.__data_generation(curr_batch)
 
         return X, y
 
     def on_epoch_end(self):
-        'Updates indexes after each epoch'
         self.indexes = np.arange(self.train_df.shape[0])
         if self.shuffle == True:
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, curr_batch):
-        'Generates data containing batch_size samples'  # X : (n_samples, *dim, n_channels)
-        # Initialization
         X = np.empty((self.batch_size, *self.dim, self.n_channels))
         y = np.empty((self.batch_size, self.n_classes), dtype=int)
 
