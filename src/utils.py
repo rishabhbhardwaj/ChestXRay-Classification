@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 
-def get_sample_counts(output_dir, dataset, class_names):
+def get_sample_counts(file, class_names):
     """
     Get total and class-wise positive sample count of a dataset
 
@@ -16,7 +16,7 @@ def get_sample_counts(output_dir, dataset, class_names):
     total_count - int
     class_positive_counts - dict of int, ex: {"Effusion": 300, "Infiltration": 500 ...}
     """
-    df = pd.read_csv(os.path.join(output_dir, dataset + ".csv"))
+    df = pd.read_csv(file)
     total_count = df.shape[0]
     labels = df[class_names].as_matrix()
     positive_counts = np.sum(labels, axis=0)

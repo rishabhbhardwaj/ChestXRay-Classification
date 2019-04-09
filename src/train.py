@@ -7,8 +7,9 @@ from configparser import ConfigParser
 import tensorflow as tf
 import keras
 from keras.callbacks import ModelCheckpoint, TensorBoard, ReduceLROnPlateau
+from keras.backend.tensorflow_backend import set_session
 
-import models
+from src.models import DenseNet
 from src.generator import CheXpertDataGenerator
 from src.callbacks import MultipleClassAUROC
 from src.utils import get_sample_counts, get_class_weights
@@ -16,38 +17,40 @@ from src.utils import get_sample_counts, get_class_weights
 def parse_args(args):
 
     parser = argparse.ArgumentParser(description='Training...')
-    parser.add_argument('--data-dir', help='Input dataset directory.', type=str, default='../')
-    parser.add_argument('--data-csv-dir', help='path of the folder that contains train.csv|dev.csv|test.csv', type=str, default='../CheXpert-v1.0-small/')
-    parser.add_argument('--out-dir', help='Output directory', type=str, default='../data/results/')
+    parser.add_argument('--data-dir', help='Input dataset directory.', type=str, default='./')
+    parser.add_argument('--data-csv-dir', help='path of the folder that contains train.csv|dev.csv|test.csv', type=str, default='./CheXpert-v1.0-small/')
+    parser.add_argument('--out-dir', help='Output directory', type=str, default='./out/')
     parser.add_argument('--base-model', help='Initial pretrained model.Default is Imagenet.', type=str, default='imagenet')
     parser.add_argument('--model', help='Model architecture to train', type=str, default='densenet121')
     parser.add_argument('--epochs', help='Number of epochs', type=int, default=5)
     parser.add_argument('--lr', help='Initial learning rate', type=float, default=1e-3)
     parser.add_argument('--batch-size', help='Training batch size', type=int, default=64)
 
+    return parser.parse_args(args)
 
 def get_tf_session():
 
     config = tf.ConfigProto()
-    config.gpu.options.allow_growth = True
+    config.gpu_options.allow_growth = True
     session = tf.Session(config = config)
     return session
 
-def main(args):
+def main(args=None):
 
     args = parse_args(args)
-    config = ConfigParser()
-    config.read('../config.ini')
+    cfg = ConfigParser()
+    cfg.read('config.ini')
+    print("Complete reading config...")
 
     HEIGHT = 390
     WIDTH = 320
     channels = 3
     output_weights_path = os.path.join(args.out_dir, 'weights_'+str(time.time())+'.h5')
     training_stats = {}
-    generator_workers = config["TRAIN"].getint("generator_workers")
-    min_lr = config["TRAIN"].getfloat("minimum_lr")
-    patience_reduce_lr = config['TRAIN'].getint('patience_reduce_lr')
-    positive_weights_multiply = config['TRAIN'].getint('positive_weights_multiply')
+    generator_workers = cfg["TRAIN"].getint("generator_workers")
+    min_lr = cfg["TRAIN"].getfloat("minimum_lr")
+    patience_reduce_lr = cfg['TRAIN'].getint('patience_reduce_lr')
+    positive_weights_multiply = cfg['TRAIN'].getint('positive_weights_multiply')
 
     log_dir = os.path.join(args.out_dir, 'logs')
     if not os.path.isdir(log_dir):
@@ -57,14 +60,16 @@ def main(args):
                    'Lung Lesion', 'Edema', 'Consolidation', 'Pneumonia', 'Atelectasis', 'Pneumothorax',
                    'Pleural Effusion', 'Pleural Other', 'Fracture','Support Devices']
 
+    set_session(get_tf_session())
+
     train_file = os.path.join(args.data_csv_dir, 'train.csv')
     valid_file = os.path.join(args.data_csv_dir, 'valid.csv')
 
     train_data = CheXpertDataGenerator(train_file, class_names, args.data_dir,batch_size=args.batch_size)
     valid_data = CheXpertDataGenerator(valid_file, class_names, args.data_dir, batch_size=args.batch_size)
 
-    train_counts, train_pos_counts = get_sample_counts(args.data_dir, "train", class_names)
-    valid_counts, _ = get_sample_counts(args.data_dir, "valid", class_names)
+    train_counts, train_pos_counts = get_sample_counts(train_file, class_names)
+    valid_counts, _ = get_sample_counts(valid_file, class_names)
     class_weights = get_class_weights(
         train_counts,
         train_pos_counts,
@@ -75,7 +80,7 @@ def main(args):
     valid_steps = int(valid_counts / args.batch_size)
 
     if args.model == 'densenet121':
-        model = models.Densenet121(HEIGHT, WIDTH, channels, class_names)
+        model = DenseNet(HEIGHT, WIDTH, channels, class_names)
     else:
         print('Model',args.model, 'is not supported.')
 
@@ -125,3 +130,5 @@ def main(args):
         }, f)
     print("--------- Completed ---------")
 
+if __name__ == '__main__':
+    main()
