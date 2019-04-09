@@ -9,12 +9,13 @@ import keras
 class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
-    def __init__(self, train_file, classes, data_dir, batch_size=32, dim=(390 * 320), n_channels=1,
+    def __init__(self, train_file, classes, data_dir, batch_size=32, dim=(224,224), n_channels=1,
                  shuffle=True):
         'Initialization'
         self.batch_size = batch_size
         self.classes = classes
         self.n_classes = len(self.classes)
+        self.n_channels = 3
         self.dim = dim
         self.data_dir = data_dir
         self.shuffle = shuffle
@@ -25,7 +26,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         self.on_epoch_end()
 
     def __len__(self):
-        return int(np.floor(len(self.train_df.shape[0]) / self.batch_size))
+        return int(np.floor(self.train_df.shape[0] / self.batch_size))
 
     def __getitem__(self, index):
         indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
@@ -44,11 +45,13 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         y = np.empty((self.batch_size, self.n_classes), dtype=int)
 
         # Generate data
-        for index, row in curr_batch.iterrows():
+        for i, (index, row) in enumerate(curr_batch.iterrows()):
             # Image
             img = Image.open(os.path.join(self.data_dir, row['Path']))
+            # print("Before resize: ", img.size)
             img = img.resize(self.dim, Image.ANTIALIAS)
-            X.append(np.array(img))
+            # print("After resize: ", img.size)
+            X[i] = np.stack((img,)*3, axis=-1)
 
             # Label
             labels = []
@@ -72,6 +75,6 @@ class CheXpertDataGenerator(keras.utils.Sequence):
                     feat_val = 0
                 labels.append(feat_val)
 
-            y.append(labels)
+            y[i] = labels
 
         return X, y

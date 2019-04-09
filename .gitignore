@@ -2,5 +2,6 @@
 .ipynb_checkpoints
 
 CheXpert-v1.0-small
+out
 
 src/__pycache__

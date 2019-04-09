@@ -2,7 +2,6 @@ import argparse
 import os
 import time
 import pickle
-import importlib
 from configparser import ConfigParser
 
 import tensorflow as tf
@@ -44,10 +43,11 @@ def main(args=None):
     cfg.read('config.ini')
     print("Complete reading config...")
 
-    HEIGHT = 390
-    WIDTH = 320
-    channels = 3
-    output_weights_path = os.path.join(args.out_dir, 'weights_'+str(time.time())+'.h5')
+    HEIGHT = 224
+    WIDTH = 224
+
+    current_run_stamp = str(time.time())
+    output_weights_path = os.path.join(args.out_dir, 'weights_'+current_run_stamp+'.h5')
     training_stats = {}
     generator_workers = cfg["TRAIN"].getint("generator_workers")
     min_lr = cfg["TRAIN"].getfloat("minimum_lr")
@@ -81,11 +81,11 @@ def main(args=None):
     train_steps = int(train_counts / args.batch_size)
     valid_steps = int(valid_counts / args.batch_size)
 
-    use_base_model_weights = True
+    use_base_model_weights = False
     if args.weights:
         weights_path_file = args.weights
     else:
-        weights_path_file = False
+        weights_path_file = None
 
     model_factory = ModelFactory()
     if args.model == 'DenseNet121':
@@ -118,7 +118,7 @@ def main(args=None):
     )
     callbacks = [
         checkpoint,
-        TensorBoard(log_dir=os.path.join(args, "logs"), batch_size=args.batch_size),
+        TensorBoard(log_dir=os.path.join(args.out_dir, "logs"), batch_size=args.batch_size),
         ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=patience_reduce_lr,
                           verbose=1, mode="min", min_lr=min_lr),
         auroc,
@@ -137,11 +137,11 @@ def main(args=None):
         shuffle=False,
     )
 
-    print("--------- Store History ----------------")
-    with open(os.path.join(args.out_dir, "history.pkl"), "wb") as f:
+    print("--------- Store Current Run ----------------")
+    with open(os.path.join(args.out_dir, current_run_stamp+'.pkl'), 'wb') as f:
         pickle.dump({
-            "history": history.history,
-            "auroc": auroc.aurocs,
+            'history': history.history,
+            'auroc': auroc.aurocs,
         }, f)
     print("--------- Completed ---------")
 
