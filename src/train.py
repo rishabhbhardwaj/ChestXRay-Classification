@@ -2,6 +2,7 @@ import argparse
 import os
 import time
 import pickle
+import importlib
 from configparser import ConfigParser
 
 import tensorflow as tf
@@ -9,7 +10,7 @@ import keras
 from keras.callbacks import ModelCheckpoint, TensorBoard, ReduceLROnPlateau
 from keras.backend.tensorflow_backend import set_session
 
-from src.models import DenseNet
+from src.models import DenseNet, ModelFactory
 from src.generator import CheXpertDataGenerator
 from src.callbacks import MultipleClassAUROC
 from src.utils import get_sample_counts, get_class_weights
@@ -21,10 +22,11 @@ def parse_args(args):
     parser.add_argument('--data-csv-dir', help='path of the folder that contains train.csv|dev.csv|test.csv', type=str, default='./CheXpert-v1.0-small/')
     parser.add_argument('--out-dir', help='Output directory', type=str, default='./out/')
     parser.add_argument('--base-model', help='Initial pretrained model.Default is Imagenet.', type=str, default='imagenet')
-    parser.add_argument('--model', help='Model architecture to train', type=str, default='densenet121')
+    parser.add_argument('--model', help='Model architecture to train', type=str, default='DenseNet121')
     parser.add_argument('--epochs', help='Number of epochs', type=int, default=5)
     parser.add_argument('--lr', help='Initial learning rate', type=float, default=1e-3)
     parser.add_argument('--batch-size', help='Training batch size', type=int, default=64)
+    parser.add_argument('--weights', help='Pre-trained weights', type=str, default=None)
 
     return parser.parse_args(args)
 
@@ -79,13 +81,26 @@ def main(args=None):
     train_steps = int(train_counts / args.batch_size)
     valid_steps = int(valid_counts / args.batch_size)
 
-    if args.model == 'densenet121':
-        model = DenseNet(HEIGHT, WIDTH, channels, class_names)
+    use_base_model_weights = True
+    if args.weights:
+        weights_path_file = args.weights
+    else:
+        weights_path_file = False
+
+    model_factory = ModelFactory()
+    if args.model == 'DenseNet121':
+        # model = DenseNet(HEIGHT, WIDTH, channels, class_names)
+        model = model_factory.get_model(
+                                class_names,
+                                model_name=args.model,
+                                use_base_weights=use_base_model_weights,
+                                weights_path=weights_path_file,
+                                input_shape=(HEIGHT, WIDTH, 3))
     else:
         print('Model',args.model, 'is not supported.')
+        exit(1)
 
     optimizer = keras.optimizers.Adam(lr=args.lr, beta_1=0.9, beta_2=0.999)
-
     model.compile(optimizer=optimizer, loss="binary_crossentropy")
 
     auroc = MultipleClassAUROC(
