@@ -35,6 +35,18 @@ class CheXpertDataGenerator(keras.utils.Sequence):
 
         return X, y
 
+    def get_y_true(self):
+        """
+        Use this function to get y_true for predict_generator
+        In order to get correct y, you have to set shuffle_on_epoch_end=False.
+
+        """
+        if self.shuffle:
+            raise ValueError("""
+            You're trying run get_y_true() when generator option 'shuffle_on_epoch_end' is True.
+            """)
+        return self.y[:self.steps*self.batch_size, :]
+
     def on_epoch_end(self):
         self.indexes = np.arange(self.train_df.shape[0])
         if self.shuffle == True:
