@@ -10,7 +10,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
     def __init__(self, train_file, classes, data_dir, batch_size=32, dim=(224,224), n_channels=1,
-                 shuffle=True):
+                 shuffle=False):
         'Initialization'
         self.batch_size = batch_size
         self.classes = classes
