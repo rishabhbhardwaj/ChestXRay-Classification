@@ -23,7 +23,8 @@ class CheXpertDataGenerator(keras.utils.Sequence):
 
         self.train_df = pd.read_csv(train_file)
         self.train_df = self.train_df[self.train_df['Frontal/Lateral'] == 'Frontal']
-
+        self.steps = int(np.floor(self.train_df.shape[0] / self.batch_size))
+        print("Steps...", self.steps)
         self.on_epoch_end()
 
     def __len__(self):

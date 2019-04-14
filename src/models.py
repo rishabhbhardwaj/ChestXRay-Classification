@@ -99,7 +99,6 @@ class ModelFactory:
         return model
 
 
-
 def DenseNet(height, width, channels, classes):
     base_model = DenseNet121(weights='imagenet', include_top=False, input_shape=(height, width, channels))
     for layer in base_model.layers[-4:]:

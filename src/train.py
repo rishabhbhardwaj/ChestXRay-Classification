@@ -81,7 +81,7 @@ def main(args=None):
     train_steps = int(train_counts / args.batch_size)
     valid_steps = int(valid_counts / args.batch_size)
 
-    use_base_model_weights = False
+    use_base_model_weights = True
     if args.weights:
         weights_path_file = args.weights
     else:
