@@ -9,7 +9,7 @@ import keras
 class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
-    def __init__(self, train_file, classes, data_dir, batch_size=32, dim=(224,224), n_channels=1,
+    def __init__(self, train_file, classes, data_dir, steps, batch_size=32, dim=(224,224), n_channels=1,
                  shuffle=False):
         'Initialization'
         self.batch_size = batch_size
@@ -23,8 +23,8 @@ class CheXpertDataGenerator(keras.utils.Sequence):
 
         self.train_df = pd.read_csv(train_file)
         self.train_df = self.train_df[self.train_df['Frontal/Lateral'] == 'Frontal']
-        self.steps = int(np.floor(self.train_df.shape[0] / self.batch_size))
-        print("Steps...", self.steps)
+        # self.steps = int(np.floor(self.train_df.shape[0] / self.batch_size))
+        self.steps = steps
         self.on_epoch_end()
 
     def __len__(self):

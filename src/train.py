@@ -67,9 +67,6 @@ def main(args=None):
     train_file = os.path.join(args.data_csv_dir, 'train.csv')
     valid_file = os.path.join(args.data_csv_dir, 'valid.csv')
 
-    train_data = CheXpertDataGenerator(train_file, class_names, args.data_dir,batch_size=args.batch_size)
-    valid_data = CheXpertDataGenerator(valid_file, class_names, args.data_dir, batch_size=args.batch_size)
-
     train_counts, train_pos_counts = get_sample_counts(train_file, class_names)
     valid_counts, _ = get_sample_counts(valid_file, class_names)
     class_weights = get_class_weights(
@@ -80,6 +77,9 @@ def main(args=None):
 
     train_steps = int(train_counts / args.batch_size)
     valid_steps = int(valid_counts / args.batch_size)
+
+    train_data = CheXpertDataGenerator(train_file, class_names, args.data_dir, train_steps, batch_size=args.batch_size)
+    valid_data = CheXpertDataGenerator(valid_file, class_names, args.data_dir, valid_steps,  batch_size=args.batch_size)
 
     use_base_model_weights = True
     if args.weights:
