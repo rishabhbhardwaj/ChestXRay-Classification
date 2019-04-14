@@ -57,7 +57,7 @@ class MultipleClassAUROC(Callback):
         y_hat = self.model.predict_generator(self.sequence, workers=self.workers)
         y = self.sequence.get_y_true()
 
-        print("*** epoch#{epoch + 1} dev auroc ***")
+        print("*** Epoch# %d dev auroc ***" % (epoch + 1))
         current_auroc = []
         for i in range(len(self.class_names)):
             try:
@@ -66,14 +66,14 @@ class MultipleClassAUROC(Callback):
                 score = 0
             self.aurocs[self.class_names[i]].append(score)
             current_auroc.append(score)
-            print("{i+1}. {self.class_names[i]}: {score}")
+            print("%d. %s: %f" % ((i+1), self.class_names[i], score))
         print("*********************************")
 
         # customize your multiple class metrics here
         mean_auroc = np.mean(current_auroc)
-        print("mean auroc: {mean_auroc}")
+        print("mean auroc: %f" % (mean_auroc))
         if mean_auroc > self.stats["best_mean_auroc"]:
-            print("update best auroc from {self.stats['best_mean_auroc']} to {mean_auroc}")
+            print("Update best auroc from %f to %f" % (self.stats['best_mean_auroc'], mean_auroc))
 
             # 1. copy best model
             shutil.copy(self.weights_path, self.best_weights_path)
@@ -81,13 +81,13 @@ class MultipleClassAUROC(Callback):
             # 2. update log file
             print("update log file: {self.best_auroc_log_path}")
             with open(self.best_auroc_log_path, "a") as f:
-                f.write("(epoch#{epoch + 1}) auroc: {mean_auroc}, lr: {self.stats['lr']}\n")
+                f.write("epoch #%d auroc: %f, lr: %f \n" % ((epoch+1), mean_auroc, self.stats['lr']))
 
             # 3. write stats output, this is used for resuming the training
             with open(self.stats_output_path, 'w') as f:
                 json.dump(self.stats, f)
 
-            print("update model file: {self.weights_path} -> {self.best_weights_path}")
+            print("Update model file: %s -> %s" % (self.weights_path, self.best_weights_path))
             self.stats["best_mean_auroc"] = mean_auroc
             print("*********************************")
         return
