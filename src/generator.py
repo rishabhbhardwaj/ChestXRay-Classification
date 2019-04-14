@@ -23,6 +23,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
 
         self.train_df = pd.read_csv(train_file)
         self.train_df = self.train_df[self.train_df['Frontal/Lateral'] == 'Frontal']
+
         self.on_epoch_end()
 
     def __len__(self):
@@ -32,7 +33,8 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
         curr_batch = self.train_df.iloc[indexes]
         X, y = self.__data_generation(curr_batch)
-
+        self.X = X
+        self.y = y
         return X, y
 
     def get_y_true(self):
