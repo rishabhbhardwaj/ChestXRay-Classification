@@ -12,7 +12,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
 
     def __init__(self, dataset_csv_file, class_names, source_image_dir, batch_size=16,
                  target_size=(224, 224), augmenter=None, verbose=0, steps=None,
-                 shuffle_on_epoch_end=True, random_state=1):
+                 shuffle_on_epoch_end=False, random_state=1):
         """
         :param dataset_csv_file: str, path of dataset csv file
         :param class_names: list of str
