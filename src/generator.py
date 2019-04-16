@@ -48,6 +48,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
             raise ValueError("""
             You're trying run get_y_true() when generator option 'shuffle_on_epoch_end' is True.
             """)
+        print("get_y_true shape", self.y.shape)
         return self.y[:self.steps*self.batch_size, :]
 
     def on_epoch_end(self):

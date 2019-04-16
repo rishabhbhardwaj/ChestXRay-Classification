@@ -48,7 +48,7 @@ class MultipleClassAUROC(Callback):
         """
         print("\n*********************************")
         self.stats["lr"] = float(kb.eval(self.model.optimizer.lr))
-        print("current learning rate: {self.stats['lr']}")
+        print("current learning rate:", self.stats['lr'])
 
         """
         y_hat shape: (#samples, len(class_names))
@@ -56,6 +56,13 @@ class MultipleClassAUROC(Callback):
         """
         y_hat = self.model.predict_generator(self.sequence, workers=self.workers)
         y = self.sequence.get_y_true()
+
+        print("****************************")
+        print('y_hat', y_hat.shape)
+        print(y_hat)
+        print('y', y.shape)
+        print(y)
+        print("****************************")
 
         print("*** Epoch# %d dev auroc ***" % (epoch + 1))
         current_auroc = []
