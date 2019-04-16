@@ -18,8 +18,7 @@ class MultipleClassAUROC(Callback):
         self.class_names = class_names
         self.weights_path = weights_path
         self.best_weights_path = os.path.join(
-            os.path.split(weights_path)[0],
-            "best_{os.path.split(weights_path)[1]}",
+            os.path.split(weights_path)[0],"best_"+os.path.split(weights_path)[1],
         )
         self.best_auroc_log_path = os.path.join(
             os.path.split(weights_path)[0],
@@ -57,12 +56,12 @@ class MultipleClassAUROC(Callback):
         y_hat = self.model.predict_generator(self.sequence, workers=self.workers)
         y = self.sequence.get_y_true()
 
-        print("****************************")
-        print('y_hat', y_hat.shape)
-        print(y_hat)
-        print('y', y.shape)
-        print(y)
-        print("****************************")
+        # print("****************************")
+        # print('y_hat', y_hat.shape)
+        # print(y_hat)
+        # print('y', y.shape)
+        # print(y)
+        # print("****************************")
 
         print("*** Epoch# %d dev auroc ***" % (epoch + 1))
         current_auroc = []
@@ -85,10 +84,10 @@ class MultipleClassAUROC(Callback):
             # 1. copy best model
             shutil.copy(self.weights_path, self.best_weights_path)
 
-            # 2. update log file
-            print("update log file: {self.best_auroc_log_path}")
-            with open(self.best_auroc_log_path, "a") as f:
-                f.write("epoch #%d auroc: %f, lr: %f \n" % ((epoch+1), mean_auroc, self.stats['lr']))
+            # # # 2. update log file
+            # print("update log file:", self.best_auroc_log_path)
+            # with open(self.best_auroc_log_path, "a") as f:
+            #     f.write("epoch #%d auroc: %f, lr: %f \n" % ((epoch+1), mean_auroc, self.stats['lr']))
 
             # 3. write stats output, this is used for resuming the training
             with open(self.stats_output_path, 'w') as f:
