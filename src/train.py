@@ -45,6 +45,7 @@ def main(args=None):
 
     HEIGHT = 224
     WIDTH = 224
+    image_dimension = 224
 
     current_run_stamp = str(time.time())
     output_weights_path = os.path.join(args.out_dir, 'weights_'+current_run_stamp+'.h5')
@@ -53,6 +54,7 @@ def main(args=None):
     min_lr = cfg["TRAIN"].getfloat("minimum_lr")
     patience_reduce_lr = cfg['TRAIN'].getint('patience_reduce_lr')
     positive_weights_multiply = cfg['TRAIN'].getint('positive_weights_multiply')
+    image_source_dir = cfg["DEFAULT"].get("image_source_dir")
 
     log_dir = os.path.join(args.out_dir, 'logs')
     if not os.path.isdir(log_dir):
@@ -78,8 +80,22 @@ def main(args=None):
     train_steps = int(train_counts / args.batch_size)
     valid_steps = int(valid_counts / args.batch_size)
 
-    train_data = CheXpertDataGenerator(train_file, class_names, args.data_dir, train_steps, batch_size=args.batch_size)
-    valid_data = CheXpertDataGenerator(valid_file, class_names, args.data_dir, valid_steps,  batch_size=args.batch_size)
+    train_data = CheXpertDataGenerator(dataset_csv_file=train_file,
+            class_names=class_names,
+            source_image_dir=image_source_dir,
+            batch_size=args.batch_size,
+            target_size=(image_dimension, image_dimension),
+            augmenter=None,
+            steps=train_steps,
+        )
+    valid_data = CheXpertDataGenerator(dataset_csv_file=valid_file,
+            class_names=class_names,
+            source_image_dir=image_source_dir,
+            batch_size=args.batch_size,
+            target_size=(image_dimension, image_dimension),
+            augmenter=None,
+            steps=valid_steps,
+        )
 
     use_base_model_weights = True
     if args.weights:

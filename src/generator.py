@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from PIL import Image
+from skimage.transform import resize
 
 import numpy as np
 import keras
@@ -9,34 +10,61 @@ import keras
 class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
-    def __init__(self, train_file, classes, data_dir, steps, batch_size=32, dim=(224,224), n_channels=1,
-                 shuffle=False):
-        'Initialization'
+    def __init__(self, dataset_csv_file, class_names, source_image_dir, batch_size=16,
+                 target_size=(224, 224), augmenter=None, verbose=0, steps=None,
+                 shuffle_on_epoch_end=True, random_state=1):
+        """
+        :param dataset_csv_file: str, path of dataset csv file
+        :param class_names: list of str
+        :param batch_size: int
+        :param target_size: tuple(int, int)
+        :param augmenter: imgaug object. Do not specify resize in augmenter.
+                          It will be done automatically according to input_shape of the model.
+        :param verbose: int
+        """
+        self.dataset_df = pd.read_csv(dataset_csv_file)
+        self.source_image_dir = source_image_dir
         self.batch_size = batch_size
-        self.classes = classes
-        self.n_classes = len(self.classes)
-        self.n_channels = 3
-        self.dim = dim
-        self.data_dir = data_dir
-        self.shuffle = shuffle
-        self.policy = 'ones'
+        self.target_size = target_size
+        self.augmenter = augmenter
+        self.verbose = verbose
+        self.shuffle = shuffle_on_epoch_end
+        self.random_state = random_state
+        self.class_names = class_names
+        self.prepare_dataset()
+        if steps is None:
+            self.steps = int(np.ceil(len(self.x_path) / float(self.batch_size)))
+        else:
+            self.steps = int(steps)
 
-        self.train_df = pd.read_csv(train_file)
-        self.train_df = self.train_df[self.train_df['Frontal/Lateral'] == 'Frontal']
-        # self.steps = int(np.floor(self.train_df.shape[0] / self.batch_size))
-        self.steps = steps
-        self.on_epoch_end()
+    def __bool__(self):
+        return True
 
     def __len__(self):
-        return int(np.floor(self.train_df.shape[0] / self.batch_size))
+        return self.steps
 
-    def __getitem__(self, index):
-        indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
-        curr_batch = self.train_df.iloc[indexes]
-        X, y = self.__data_generation(curr_batch)
-        self.X = X
-        self.y = y
-        return X, y
+    def __getitem__(self, idx):
+        batch_x_path = self.x_path[idx * self.batch_size:(idx + 1) * self.batch_size]
+        batch_x = np.asarray([self.load_image(x_path) for x_path in batch_x_path])
+        batch_x = self.transform_batch_images(batch_x)
+        batch_y = self.y[idx * self.batch_size:(idx + 1) * self.batch_size]
+        return batch_x, batch_y
+
+    def load_image(self, image_file):
+        image_path = os.path.join(self.source_image_dir, image_file)
+        image = Image.open(image_path)
+        image_array = np.asarray(image.convert("RGB"))
+        image_array = image_array / 255.
+        image_array = resize(image_array, self.target_size)
+        return image_array
+
+    def transform_batch_images(self, batch_x):
+        if self.augmenter is not None:
+            batch_x = self.augmenter.augment_images(batch_x)
+        imagenet_mean = np.array([0.485, 0.456, 0.406])
+        imagenet_std = np.array([0.229, 0.224, 0.225])
+        batch_x = (batch_x - imagenet_mean) / imagenet_std
+        return batch_x
 
     def get_y_true(self):
         """
@@ -48,49 +76,14 @@ class CheXpertDataGenerator(keras.utils.Sequence):
             raise ValueError("""
             You're trying run get_y_true() when generator option 'shuffle_on_epoch_end' is True.
             """)
-        print("get_y_true shape", self.y.shape)
         return self.y[:self.steps*self.batch_size, :]
 
+    def prepare_dataset(self):
+        df = self.dataset_df.sample(frac=1., random_state=self.random_state)
+        df.fillna(0, inplace=True)
+        self.x_path, self.y = df["Path"].as_matrix(), df[self.class_names].as_matrix()
+
     def on_epoch_end(self):
-        self.indexes = np.arange(self.train_df.shape[0])
-        if self.shuffle == True:
-            np.random.shuffle(self.indexes)
-
-    def __data_generation(self, curr_batch):
-        X = np.empty((self.batch_size, *self.dim, self.n_channels))
-        y = np.empty((self.batch_size, self.n_classes), dtype=int)
-
-        # Generate data
-        for i, (index, row) in enumerate(curr_batch.iterrows()):
-            # Image
-            img = Image.open(os.path.join(self.data_dir, row['Path']))
-            # print("Before resize: ", img.size)
-            img = img.resize(self.dim, Image.ANTIALIAS)
-            # print("After resize: ", img.size)
-            X[i] = np.stack((img,)*3, axis=-1)
-
-            # Label
-            labels = []
-            for cls in self.classes:
-                curr_val = row[cls]
-                feat_val = 0
-                if curr_val:
-                    curr_val = float(curr_val)
-                    if curr_val == 1:
-                        feat_val = 1
-                    elif curr_val == -1:
-                        if self.policy == "ones":
-                            feat_val = 1
-                        elif self.policy == "zeroes":
-                            feat_val = 0
-                        else:
-                            feat_val = 0
-                    else:
-                        feat_val = 0
-                else:
-                    feat_val = 0
-                labels.append(feat_val)
-
-            y[i] = labels
-
-        return X, y
+        if self.shuffle:
+            self.random_state += 1
+            self.prepare_dataset()
