@@ -7,7 +7,9 @@ TODO
 ## Architecture/Models
 Baseline Model:
 
-Denset-121 -> classifier (sigmoid activation function per class) \\
+Denset-121 -> classifier (sigmoid activation function per class) 
+
+
 Resnet-151 -> classifier (sigmoid activation function per class)
 
 ## Dataset
