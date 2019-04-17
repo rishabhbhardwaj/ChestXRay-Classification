@@ -5,7 +5,10 @@ ChestXRay Disease Diagnosis
 TODO
 
 ## Architecture/Models
-TODO
+Baseline Model:
+
+Denset-121 -> classifier (sigmoid activation function per class)
+Resnet-151 -> classifier (sigmoid activation function per class)
 
 ## Dataset
 CheXpert: https://arxiv.org/abs/1901.07031
