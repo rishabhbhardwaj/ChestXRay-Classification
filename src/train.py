@@ -119,7 +119,7 @@ def main(args=None):
         exit(1)
 
     optimizer = keras.optimizers.Adam(lr=args.lr, beta_1=0.9, beta_2=0.999)
-    model.compile(optimizer=optimizer, loss="binary_crossentropy")
+    model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy", "binary_accuracy"])
 
     auroc = MultipleClassAUROC(
         sequence=valid_data,
