@@ -60,9 +60,11 @@ def main(args=None):
     if not os.path.isdir(log_dir):
         os.mkdir(log_dir)
 
-    class_names = ['No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity' ,
-                   'Lung Lesion', 'Edema', 'Consolidation', 'Pneumonia', 'Atelectasis', 'Pneumothorax',
-                   'Pleural Effusion', 'Pleural Other', 'Fracture','Support Devices']
+    # class_names = ['No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity' ,
+    #                'Lung Lesion', 'Edema', 'Consolidation', 'Pneumonia', 'Atelectasis', 'Pneumothorax',
+    #                'Pleural Effusion', 'Pleural Other', 'Fracture','Support Devices']
+
+    class_names = ['Atelectasis', 'Cardiomegaly', 'Consolidation', 'Edema', 'Pleural Effusion']
 
     set_session(get_tf_session())
 
