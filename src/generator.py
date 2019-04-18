@@ -79,6 +79,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         return self.y[:self.steps*self.batch_size, :]
 
     def prepare_dataset(self):
+        self.dataset_df = self.dataset_df[self.dataset_df['Frontal/Lateral'] == 'Frontal']
         df = self.dataset_df.sample(frac=1., random_state=self.random_state)
         df.fillna(0, inplace=True)
         self.x_path, self.y = df["Path"].as_matrix(), df[self.class_names].as_matrix()
