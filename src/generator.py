@@ -11,7 +11,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
     def __init__(self, dataset_csv_file, class_names, source_image_dir, batch_size=16,
-                 target_size=(224, 224), augmenter=None, verbose=0, steps=None,
+                 target_size=(224, 224), policy = "zeroes", augmenter=None, verbose=0, steps=None,
                  shuffle_on_epoch_end=False, random_state=1):
         """
         :param dataset_csv_file: str, path of dataset csv file
@@ -31,6 +31,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         self.shuffle = shuffle_on_epoch_end
         self.random_state = random_state
         self.class_names = class_names
+        self.policy = policy
         self.prepare_dataset()
         if steps is None:
             self.steps = int(np.ceil(len(self.x_path) / float(self.batch_size)))
@@ -82,7 +83,36 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         self.dataset_df = self.dataset_df[self.dataset_df['Frontal/Lateral'] == 'Frontal']
         df = self.dataset_df.sample(frac=1., random_state=self.random_state)
         df.fillna(0, inplace=True)
-        self.x_path, self.y = df["Path"].as_matrix(), df[self.class_names].as_matrix()
+        self.x_path, y_df = df["Path"].as_matrix(), df[self.class_names]
+
+        policy = self.policy
+        self.y = np.empty(y_df.shape, dtype=int)
+        # print(y_ar.shape)
+        for i, (index, row) in enumerate(y_df.iterrows()):
+            labels = []
+            for cls in self.class_names:
+                #         print(cls)
+                curr_val = row[cls]
+                #         print(curr_val)
+                feat_val = 0
+                if curr_val is not None:
+                    curr_val = float(curr_val)
+                    if curr_val == 1:
+                        feat_val = 1
+                    elif curr_val == -1:
+                        if policy == "ones":
+                            feat_val = 1
+                        elif policy == "zeroes":
+                            feat_val = 0
+                        else:
+                            feat_val = 0
+                    else:
+                        feat_val = 0
+                else:
+                    feat_val = 0
+                labels.append(feat_val)
+            #     print(len(labels))
+            self.y[i] = labels
 
     def on_epoch_end(self):
         if self.shuffle:
