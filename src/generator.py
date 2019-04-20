@@ -96,14 +96,14 @@ class CheXpertDataGenerator(keras.utils.Sequence):
                 curr_val = row[cls]
                 #         print(curr_val)
                 feat_val = 0
-                if curr_val is not None:
+                if curr_val:
                     curr_val = float(curr_val)
                     if curr_val == 1:
                         feat_val = 1
                     elif curr_val == -1:
-                        if policy == "ones":
+                        if self.policy == "ones":
                             feat_val = 1
-                        elif policy == "zeroes":
+                        elif self.policy == "zeroes":
                             feat_val = 0
                         else:
                             feat_val = 0
@@ -112,7 +112,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
                 else:
                     feat_val = 0
                 labels.append(feat_val)
-            #     print(len(labels))
+            print(labels)
             self.y[i] = labels
 
     def on_epoch_end(self):
