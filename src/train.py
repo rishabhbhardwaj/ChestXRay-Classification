@@ -68,8 +68,8 @@ def main(args=None):
 
     set_session(get_tf_session())
 
-    train_file = os.path.join(args.data_csv_dir, 'train.csv')
-    valid_file = os.path.join(args.data_csv_dir, 'valid.csv')
+    train_file = os.path.join(args.data_csv_dir, 'train_sample.csv')
+    valid_file = os.path.join(args.data_csv_dir, 'valid_sample.csv')
 
     train_counts, train_pos_counts = get_sample_counts(train_file, class_names)
     valid_counts, _ = get_sample_counts(valid_file, class_names)
@@ -78,9 +78,11 @@ def main(args=None):
         train_pos_counts,
         multiply=positive_weights_multiply,
     )
-
-    train_steps = int(train_counts / args.batch_size)
-    valid_steps = int(valid_counts / args.batch_size)
+    print('batch size', args.batch_size)
+    print('train counts', train_counts)
+    print('valid counts', valid_counts)
+    # train_steps = int(train_counts / args.batch_size)
+    # valid_steps = int(valid_counts / args.batch_size)
 
     train_data = CheXpertDataGenerator(dataset_csv_file=train_file,
             class_names=class_names,
@@ -88,7 +90,7 @@ def main(args=None):
             batch_size=args.batch_size,
             target_size=(image_dimension, image_dimension),
             augmenter=None,
-            steps=train_steps,
+            steps=None,
         )
     valid_data = CheXpertDataGenerator(dataset_csv_file=valid_file,
             class_names=class_names,
@@ -96,7 +98,7 @@ def main(args=None):
             batch_size=args.batch_size,
             target_size=(image_dimension, image_dimension),
             augmenter=None,
-            steps=valid_steps,
+            steps=None,
         )
 
     use_base_model_weights = True
@@ -145,10 +147,10 @@ def main(args=None):
     print("----------- Training ------------")
     history = model.fit_generator(
         generator=train_data,
-        steps_per_epoch=train_steps,
+        steps_per_epoch=None,
         epochs=args.epochs,
         validation_data=valid_data,
-        validation_steps=valid_steps,
+        validation_steps=None,
         callbacks=callbacks,
         class_weight=class_weights,
         workers=generator_workers,

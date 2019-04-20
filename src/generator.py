@@ -37,7 +37,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
             self.steps = int(np.ceil(len(self.x_path) / float(self.batch_size)))
         else:
             self.steps = int(steps)
-
+        print('steps..', self.steps)
     def __bool__(self):
         return True
 
@@ -45,6 +45,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         return self.steps
 
     def __getitem__(self, idx):
+        print('idx....', idx)
         batch_x_path = self.x_path[idx * self.batch_size:(idx + 1) * self.batch_size]
         batch_x = np.asarray([self.load_image(x_path) for x_path in batch_x_path])
         batch_x = self.transform_batch_images(batch_x)
@@ -86,7 +87,6 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         df.fillna(0, inplace=True)
         self.x_path, y_df = df["Path"].as_matrix(), df[self.class_names]
 
-        policy = self.policy
         self.y = np.empty(y_df.shape, dtype=int)
         # print(y_ar.shape)
         for i, (index, row) in enumerate(y_df.iterrows()):
@@ -112,7 +112,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
                 else:
                     feat_val = 0
                 labels.append(feat_val)
-            print(labels)
+            # print(labels)
             self.y[i] = labels
 
     def on_epoch_end(self):
