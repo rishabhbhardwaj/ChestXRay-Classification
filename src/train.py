@@ -13,6 +13,7 @@ from src.models import DenseNet, ModelFactory
 from src.generator import CheXpertDataGenerator
 from src.callbacks import MultipleClassAUROC
 from src.utils import get_sample_counts, get_class_weights
+from src.augmentations import augmenter
 
 def parse_args(args):
 
@@ -68,8 +69,8 @@ def main(args=None):
 
     set_session(get_tf_session())
 
-    train_file = os.path.join(args.data_csv_dir, 'train_sample.csv')
-    valid_file = os.path.join(args.data_csv_dir, 'valid_sample.csv')
+    train_file = os.path.join(args.data_csv_dir, 'train.csv')
+    valid_file = os.path.join(args.data_csv_dir, 'valid.csv')
 
     train_counts, train_pos_counts = get_sample_counts(train_file, class_names)
     valid_counts, _ = get_sample_counts(valid_file, class_names)
@@ -78,9 +79,9 @@ def main(args=None):
         train_pos_counts,
         multiply=positive_weights_multiply,
     )
-    print('batch size', args.batch_size)
-    print('train counts', train_counts)
-    print('valid counts', valid_counts)
+    # print('batch size', args.batch_size)
+    # print('train counts', train_counts)
+    # print('valid counts', valid_counts)
     # train_steps = int(train_counts / args.batch_size)
     # valid_steps = int(valid_counts / args.batch_size)
 
@@ -89,8 +90,7 @@ def main(args=None):
             source_image_dir=image_source_dir,
             batch_size=args.batch_size,
             target_size=(image_dimension, image_dimension),
-            augmenter=None,
-            steps=None,
+            augmenter=augmenter,
         )
     valid_data = CheXpertDataGenerator(dataset_csv_file=valid_file,
             class_names=class_names,
@@ -98,7 +98,6 @@ def main(args=None):
             batch_size=args.batch_size,
             target_size=(image_dimension, image_dimension),
             augmenter=None,
-            steps=None,
         )
 
     use_base_model_weights = True

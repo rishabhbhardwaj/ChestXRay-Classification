@@ -11,17 +11,9 @@ class CheXpertDataGenerator(keras.utils.Sequence):
     'Data Generetor for CheXpert'
 
     def __init__(self, dataset_csv_file, class_names, source_image_dir, batch_size=16,
-                 target_size=(224, 224), policy = "zeroes", augmenter=None, verbose=0, steps=None,
+                 target_size=(224, 224), policy = "zeroes", augmenter=None, verbose=0,
                  shuffle_on_epoch_end=False, random_state=1):
-        """
-        :param dataset_csv_file: str, path of dataset csv file
-        :param class_names: list of str
-        :param batch_size: int
-        :param target_size: tuple(int, int)
-        :param augmenter: imgaug object. Do not specify resize in augmenter.
-                          It will be done automatically according to input_shape of the model.
-        :param verbose: int
-        """
+
         self.dataset_df = pd.read_csv(dataset_csv_file)
         self.source_image_dir = source_image_dir
         self.batch_size = batch_size
@@ -33,11 +25,9 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         self.class_names = class_names
         self.policy = policy
         self.prepare_dataset()
-        if steps is None:
-            self.steps = int(np.ceil(len(self.x_path) / float(self.batch_size)))
-        else:
-            self.steps = int(steps)
-        print('steps..', self.steps)
+        self.steps = int(np.ceil(len(self.x_path) / float(self.batch_size)))
+
+        # print('steps..', self.steps)
     def __bool__(self):
         return True
 
@@ -45,7 +35,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         return self.steps
 
     def __getitem__(self, idx):
-        print('idx....', idx)
+        # print('idx....', idx)
         batch_x_path = self.x_path[idx * self.batch_size:(idx + 1) * self.batch_size]
         batch_x = np.asarray([self.load_image(x_path) for x_path in batch_x_path])
         batch_x = self.transform_batch_images(batch_x)
@@ -70,11 +60,6 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         return batch_x
 
     def get_y_true(self):
-        """
-        Use this function to get y_true for predict_generator
-        In order to get correct y, you have to set shuffle_on_epoch_end=False.
-
-        """
         if self.shuffle:
             raise ValueError("""
             You're trying run get_y_true() when generator option 'shuffle_on_epoch_end' is True.
