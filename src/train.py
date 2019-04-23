@@ -91,6 +91,7 @@ def main(args=None):
             batch_size=args.batch_size,
             target_size=(image_dimension, image_dimension),
             augmenter=augmenter,
+            policy = 'mixed',
         )
     valid_data = CheXpertDataGenerator(dataset_csv_file=valid_file,
             class_names=class_names,
@@ -98,6 +99,7 @@ def main(args=None):
             batch_size=args.batch_size,
             target_size=(image_dimension, image_dimension),
             augmenter=None,
+            policy ='mixed',
         )
 
     use_base_model_weights = True

@@ -71,7 +71,7 @@ class CheXpertDataGenerator(keras.utils.Sequence):
         df = self.dataset_df.sample(frac=1., random_state=self.random_state)
         df.fillna(0, inplace=True)
         self.x_path, y_df = df["Path"].as_matrix(), df[self.class_names]
-
+        self.class_ones = ['Atelectasis', 'Cardiomegaly']
         self.y = np.empty(y_df.shape, dtype=int)
         # print(y_ar.shape)
         for i, (index, row) in enumerate(y_df.iterrows()):
@@ -90,6 +90,11 @@ class CheXpertDataGenerator(keras.utils.Sequence):
                             feat_val = 1
                         elif self.policy == "zeroes":
                             feat_val = 0
+                        elif self.policy == "mixed":
+                            if cls in self.class_ones:
+                                feat_val = 1
+                            else:
+                                feat_val = 0
                         else:
                             feat_val = 0
                     else:
