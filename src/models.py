@@ -94,7 +94,7 @@ class ModelFactory:
             weights_path = None
 
         if weights_path is not None:
-            print("load model weights_path: {weights_path}")
+            print("load model weights_path", weights_path)
             model.load_weights(weights_path)
         return model
 
