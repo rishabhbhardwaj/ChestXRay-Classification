@@ -2,6 +2,7 @@ from keras.models import load_model
 from keras.preprocessing import image
 #from src.models import DenseNet, ModelFactory
 from models import DenseNet, ModelFactory
+from skimage.transform import resize
 import numpy as np
 import keras
 import sys
@@ -33,10 +34,12 @@ def predict_save(model, input_file, output_df):
         test_image_path = row['Path']
         study_path = test_image_path.split('/')[:-1] 
         study_path = "/".join(study_path)
-        print(study_path)
+        # print(study_path)
         img = image.load_img(test_image_path, target_size=(img_width, img_height))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
+        image_array = np.asarray(img.convert("RGB"))
+        image_array = image_array / 255.
+        image_array = resize(image_array, (224, 224))
+        x = np.expand_dims(image_array, axis=0)
         images = np.vstack([x])
         classes = model.predict_on_batch(images)
         probab = classes[0]
