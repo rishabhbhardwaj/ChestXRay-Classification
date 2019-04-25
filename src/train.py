@@ -109,18 +109,14 @@ def main(args=None):
         weights_path_file = None
 
     model_factory = ModelFactory()
-    if args.model == 'DenseNet121':
-        # model = DenseNet(HEIGHT, WIDTH, channels, class_names)
-        model = model_factory.get_model(
-                                class_names,
-                                model_name=args.model,
-                                use_base_weights=use_base_model_weights,
-                                weights_path=weights_path_file,
-                                input_shape=(HEIGHT, WIDTH, 3))
-    else:
-        print('Model',args.model, 'is not supported.')
-        exit(1)
 
+    model = model_factory.get_model(
+                            class_names,
+                            model_name=args.model,
+                            use_base_weights=use_base_model_weights,
+                            weights_path=weights_path_file,
+                            input_shape=(HEIGHT, WIDTH, 3))
+    
     optimizer = keras.optimizers.Adam(lr=args.lr, beta_1=0.9, beta_2=0.999)
     model.compile(optimizer=optimizer, loss="binary_crossentropy", metrics=["accuracy", "binary_accuracy"])
 
