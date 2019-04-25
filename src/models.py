@@ -13,16 +13,6 @@ class ModelFactory:
 
     def __init__(self):
         self.models_ = dict(
-            VGG16=dict(
-                input_shape=(224, 224, 3),
-                module_name="vgg16",
-                last_conv_layer="block5_conv3",
-            ),
-            VGG19=dict(
-                input_shape=(224, 224, 3),
-                module_name="vgg19",
-                last_conv_layer="block5_conv4",
-            ),
             DenseNet121=dict(
                 input_shape=(224, 224, 3),
                 module_name="densenet",
@@ -43,10 +33,9 @@ class ModelFactory:
                 module_name="inception_resnet_v2",
                 last_conv_layer="conv_7b_ac",
             ),
-            NASNetMobile=dict(
+            Xception=dict(
                 input_shape=(224, 224, 3),
-                module_name="nasnet",
-                last_conv_layer="activation_188",
+                pooling="avg"
             ),
             NASNetLarge=dict(
                 input_shape=(331, 331, 3),
