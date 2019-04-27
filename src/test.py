@@ -22,8 +22,6 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Testing...')
     parser.add_argument('--data-dir', help='Input dataset directory.', type=str, default='/Users/rishabhbhardwaj/Documents/personal/courses/cse6250/project/')
-    parser.add_argument('--data-csv-dir', help='path of the folder that contains train.csv|dev.csv|test.csv', type=str,
-                        default='/Users/rishabhbhardwaj/Documents/personal/courses/cse6250/project/')
     parser.add_argument('--model-file-path', help='Path to model', type=str, default='/Users/rishabhbhardwaj/Documents/personal/courses/cse6250/project/Chest-XRay-Classification/weights/best_weights_1555865398.1238055_Apr22_5cls.h5')
     parser.add_argument('--model-type', help='Model architecture to train', type=str, default='DenseNet121')
 
