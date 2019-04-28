@@ -36,18 +36,17 @@ NASNetLarge model can be downloaded from this [link](https://www.dropbox.com/s/i
 Pre-requisite : Anaconda
 
 Set-up:
-
-
+```
 conda create -n chexpert python=3.6.5
-
 pip install -r requirements_eval.txt
+```
 
 Run the model:
 
-
-cd <root directory>
-
+```
+cd root directory
 python src/test.py
+```
 
 NOTE: Please note that "test.py" runs on a small sample dataset, AOC scores might not be as expected.
 
