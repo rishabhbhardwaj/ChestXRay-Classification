@@ -4,6 +4,9 @@ import pandas as pd
 
 from src.models import ModelFactory
 from src.generator import CheXpertDataGenerator
+from keras.preprocessing import image
+from models import DenseNet, ModelFactory
+from skimage.transform import resize
 import numpy as np
 import keras
 from sklearn.metrics.ranking import roc_auc_score
@@ -13,6 +16,7 @@ def computeAUROC(dataGT, dataPRED, classCount):
     outAUROC = []
     for i in range(classCount):
         try:
+            print(i)
             outAUROC.append(roc_auc_score(dataGT[:, i], dataPRED[:, i]))
         except ValueError:
             pass
@@ -51,11 +55,38 @@ if __name__ == '__main__':
                 policy ='mixed',
             )
     print('Evaluating Model...')
-    pred = model.predict_generator(valid_data)
     df = pd.read_csv(valid_file)
-    df = df[df['Frontal/Lateral']=='Frontal']
-    class_df = df[class_names]
-    gt = class_df.as_matrix()
+    df = df[df['Frontal/Lateral'] == 'Frontal']
+    gt = []
+    pred = []
+    for index, row in df.iterrows():
+        if index == 10:
+            break
+        test_image_path = row['Path']
+        study_path = test_image_path.split('/')[:-1]
+        study_path = "/".join(study_path)
+        # print(study_path)
+        img = image.load_img(test_image_path, target_size=(img_width, img_height))
+        image_array = np.asarray(img.convert("RGB"))
+        image_array = image_array / 255.
+        image_array = resize(image_array, (224, 224))
+        x = np.expand_dims(image_array, axis=0)
+        images = np.vstack([x])
+        classes = model.predict_on_batch(images)
+        probab = classes[0]
+        curr_gt = row[class_names].values
+        print(type(probab), probab)
+        print(type(curr_gt), curr_gt)
+        gt.append(curr_gt)
+        pred.append(probab)
+    print(type(gt), gt.shape)
+    print(type(pred), pred.shape)
+    # print('Evaluating Model...')
+    # pred = model.predict_generator(valid_data)
+    # df = pd.read_csv(valid_file)
+    # df = df[df['Frontal/Lateral'] == 'Frontal']
+    # class_df = df[class_names]
+    # gt = class_df.as_matrix()
 
     aurocIndividual = computeAUROC(gt, pred, 5)
     aurocMean = np.array(aurocIndividual).mean()
