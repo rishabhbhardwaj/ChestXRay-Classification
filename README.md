@@ -47,6 +47,7 @@ Run the model:
 
 ```
 cd <root directory>
+export PYTHONPATH=<Path-To-ChestXRay-Classification>:$PYTHONPATH
 python src/test.py
 ```
 
