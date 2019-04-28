@@ -26,7 +26,7 @@ Dataset can be downloaded from here: http://download.cs.stanford.edu/deep/CheXpe
 Note: Please note that you need to subscribe to CheXpert website to download the dataset: https://stanfordmlgroup.github.io/competitions/chexpert/
 
 ## Models
-Model which is submitted to [CheXpert competition](https://stanfordmlgroup.github.io/competitions/chexpert/) is available at dir: ```codalab/src/best_weights_1555865398.1238055_Apr22_5cls.h5```
+Model which is submitted to [CheXpert competition](https://stanfordmlgroup.github.io/competitions/chexpert/) is available at dir: ```codalab/src/best_weights_1555982768.7076797.h5```
 
 Currently, **We are placed 4th (fourth) in the competition**.
 
