@@ -32,18 +32,24 @@ Currently, **We are placed 4th (fourth) in the competition**.
 
 NASNetLarge model can be downloaded from this [link](https://www.dropbox.com/s/i42s1its6r6nd9n/best_weights_1556219541.2163985_NASNet.h5?dl=0)
 
-## For quick evaluation of the existing models, please follow the below steps
+## For quick evaluation of the existing models, please follow below steps:
 Pre-requisite : Anaconda
 
 Set-up:
 
+
 conda create -n chexpert python=3.6.5
+
 pip install -r requirements_eval.txt
 
 Run the model:
+
+
 cd <root directory>
 
 python src/test.py
+
+NOTE: Please note that "test.py" runs on a small sample dataset, AOC scores might not be as expected.
 
 ## Set Up
 ```
