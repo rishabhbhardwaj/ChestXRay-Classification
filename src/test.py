@@ -16,7 +16,6 @@ def computeAUROC(dataGT, dataPRED, classCount):
     outAUROC = []
     for i in range(classCount):
         try:
-            print(i)
             outAUROC.append(roc_auc_score(dataGT[:, i], dataPRED[:, i]))
         except ValueError:
             pass
@@ -30,7 +29,6 @@ if __name__ == '__main__':
     parser.add_argument('--model-type', help='Model architecture to train', type=str, default='DenseNet121')
 
     args = parser.parse_args()
-    print(args.data_dir)
     img_width, img_height = 224, 224
     valid_file = os.path.join(args.data_dir, 'CheXpert-v1.0-small/valid.csv')
     # model_file_path = '../weights/best_weights_1555865398.1238055_Apr22_5cls.h5'
@@ -60,12 +58,9 @@ if __name__ == '__main__':
     gt = []
     pred = []
     for index, row in df.iterrows():
-        # if index == 10:
-        #     break
         test_image_path = row['Path']
         study_path = test_image_path.split('/')[:-1]
         study_path = "/".join(study_path)
-        # print(study_path)
         img = image.load_img(test_image_path, target_size=(img_width, img_height))
         image_array = np.asarray(img.convert("RGB"))
         image_array = image_array / 255.
