@@ -46,3 +46,49 @@ python src/test.py --data-dir <Dir Containing CheXpert Data> --model-file-path <
 | Edema            	| 0.918155    	| 0.925000     	|
 | Pleural Effusion 	| 0.910326    	| 0.932858     	|
 | Mean AUROC       	| 0.876953    	| 0.863474     	|
+
+
+## Code Structure
+```
+├── README.md
+├── codalab
+│   ├── CheXpert-v1.0
+│   │   └── valid
+│   │       └── patient00000
+│   │           ├── study1
+│   │           │   ├── view1_frontal.jpg
+│   │           │   └── view2_lateral.jpg
+│   │           └── study2
+│   │               └── view1_frontal.jpg
+│   ├── src
+│   │   ├── best_weights_1555982768.7076797.h5
+│   │   ├── codalab_submit.py
+│   │   └── models.py
+│   ├── src.zip
+│   └── valid_image_paths.csv
+├── config.ini
+├── notebooks
+│   ├── dataPrep.ipynb
+│   ├── evaluate.ipynb
+│   └── inspect_model.ipynb
+├── out
+├── requirements.txt
+├── src
+│   ├── augmentations.py
+│   ├── callbacks.py
+│   ├── generator.py
+│   ├── metrics.py
+│   ├── models.py
+│   ├── test.py
+│   ├── train.py
+│   └── utils.py
+├── test_imgs
+│   ├── view1_frontal.jpg
+│   ├── view1_frontal2.jpg
+│   └── view1_frontal3.jpg
+├── train4.out
+├── train5.out
+└── weights
+    ├── best_weights_1555865398.1238055_Apr22_5cls.h5
+    └── best_weights_1555982768.7076797.h5
+```
