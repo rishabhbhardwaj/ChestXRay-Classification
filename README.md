@@ -33,7 +33,8 @@ Currently, **We are placed 4th (fourth) in the competition**.
 NASNetLarge model can be downloaded from this [link](https://www.dropbox.com/s/i42s1its6r6nd9n/best_weights_1556219541.2163985_NASNet.h5?dl=0)
 
 ## For quick evaluation of the existing models, please follow below steps:
-Pre-requisite : Anaconda
+We have used Anaconda for the project development and testing. 
+``` requirements_eval.txt ``` lists the required packages if you may choose not to use Anaconda.
 
 Set-up:
 ```
@@ -46,6 +47,7 @@ Run the model:
 
 ```
 cd <root directory>
+export PYTHONPATH=<Path-To-ChestXRay-Classification>:$PYTHONPATH
 python src/test.py
 ```
 
