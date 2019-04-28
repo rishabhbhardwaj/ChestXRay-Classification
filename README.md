@@ -19,6 +19,10 @@ NAsNetLarge -> classifier (sigmoid activation function per class)
 ## Dataset
 CheXpert: https://arxiv.org/abs/1901.07031
 
+Dataset can be downloaded from here: http://download.cs.stanford.edu/deep/CheXpert-v1.0-small.zip
+
+Note: Please note that you need to subscribe to CheXpert website to download the dataset: https://stanfordmlgroup.github.io/competitions/chexpert/
+
 ## Models
 Model which is submitted to [CheXpert competition](https://stanfordmlgroup.github.io/competitions/chexpert/) is available at dir: ```codalab/src/best_weights_1555865398.1238055_Apr22_5cls.h5```
 
