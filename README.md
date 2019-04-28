@@ -26,11 +26,30 @@ Dataset can be downloaded from here: http://download.cs.stanford.edu/deep/CheXpe
 Note: Please note that you need to subscribe to CheXpert website to download the dataset: https://stanfordmlgroup.github.io/competitions/chexpert/
 
 ## Models
-Model which is submitted to [CheXpert competition](https://stanfordmlgroup.github.io/competitions/chexpert/) is available at dir: ```codalab/src/best_weights_1555865398.1238055_Apr22_5cls.h5```
+Model which is submitted to [CheXpert competition](https://stanfordmlgroup.github.io/competitions/chexpert/) is available at dir: ```codalab/src/best_weights_1555982768.7076797.h5```
 
 Currently, **We are placed 4th (fourth) in the competition**.
 
 NASNetLarge model can be downloaded from this [link](https://www.dropbox.com/s/i42s1its6r6nd9n/best_weights_1556219541.2163985_NASNet.h5?dl=0)
+
+## For quick evaluation of the existing models, please follow below steps:
+Pre-requisite : Anaconda
+
+Set-up:
+```
+conda create -n chexpert python=3.6.5
+conda activate chexpert
+pip install -r requirements_eval.txt
+```
+
+Run the model:
+
+```
+cd <root directory>
+python src/test.py
+```
+
+NOTE: Please note that "test.py" runs on a small sample dataset, AOC scores might not be as expected.
 
 ## Set Up
 ```
@@ -61,7 +80,7 @@ Below is the model comparison for the 5 classes ('Atelectasis', 'Cardiomegaly', 
 | Consolidation    	| 0.923713    	| 0.853493     	|
 | Edema            	| 0.918155    	| 0.925000     	|
 | Pleural Effusion 	| 0.910326    	| 0.932858     	|
-| Mean AUROC       	| 0.876953    	| 0.863474     	|
+| **Mean AUROC**       	| **0.876953**    	| **0.863474**     	|
 
 
 ## Code Structure
