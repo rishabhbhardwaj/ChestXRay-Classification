@@ -5,7 +5,7 @@ import pandas as pd
 from src.models import ModelFactory
 from src.generator import CheXpertDataGenerator
 from keras.preprocessing import image
-from models import DenseNet, ModelFactory
+from src.models import DenseNet, ModelFactory
 from skimage.transform import resize
 import numpy as np
 import keras
@@ -60,8 +60,8 @@ if __name__ == '__main__':
     gt = []
     pred = []
     for index, row in df.iterrows():
-        if index == 10:
-            break
+        # if index == 10:
+        #     break
         test_image_path = row['Path']
         study_path = test_image_path.split('/')[:-1]
         study_path = "/".join(study_path)
@@ -75,18 +75,10 @@ if __name__ == '__main__':
         classes = model.predict_on_batch(images)
         probab = classes[0]
         curr_gt = row[class_names].values
-        print(type(probab), probab)
-        print(type(curr_gt), curr_gt)
         gt.append(curr_gt)
         pred.append(probab)
-    print(type(gt), gt.shape)
-    print(type(pred), pred.shape)
-    # print('Evaluating Model...')
-    # pred = model.predict_generator(valid_data)
-    # df = pd.read_csv(valid_file)
-    # df = df[df['Frontal/Lateral'] == 'Frontal']
-    # class_df = df[class_names]
-    # gt = class_df.as_matrix()
+    pred = np.array(pred, dtype=float)
+    gt = np.array(gt, dtype=float)
 
     aurocIndividual = computeAUROC(gt, pred, 5)
     aurocMean = np.array(aurocIndividual).mean()
