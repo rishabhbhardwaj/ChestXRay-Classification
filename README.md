@@ -51,8 +51,6 @@ export PYTHONPATH=<Path-To-ChestXRay-Classification>:$PYTHONPATH
 python src/test.py
 ```
 
-NOTE: Please note that "test.py" runs on a small sample dataset, AOC scores might not be as expected.
-
 ## Set Up
 ```
 pip install -r requirements.txt
