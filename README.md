@@ -40,13 +40,13 @@ Set-up:
 ```
 conda create -n chexpert python=3.6.5
 conda activate chexpert
+cd <root directory>
 pip install -r requirements_eval.txt
 ```
 
 Run the model:
 
 ```
-cd <root directory>
 export PYTHONPATH=<Path-To-ChestXRay-Classification>:$PYTHONPATH
 python src/test.py
 ```
