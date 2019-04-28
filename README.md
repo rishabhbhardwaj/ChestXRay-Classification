@@ -27,6 +27,7 @@ pip install -r requirements.txt
 ## Training
 ```
 export PYTHONPATH=<Path-To-ChestXRay-Classification>:$PYTHONPATH
+mkdir <Path-To-ChestXRay-Classification>/out
 python src/train.py
 ```
 
