@@ -38,6 +38,7 @@ Pre-requisite : Anaconda
 Set-up:
 ```
 conda create -n chexpert python=3.6.5
+conda activate chexpert
 pip install -r requirements_eval.txt
 ```
 
