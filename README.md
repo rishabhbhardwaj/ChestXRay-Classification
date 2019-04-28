@@ -19,6 +19,8 @@ NAsNetLarge -> classifier (sigmoid activation function per class)
 ## Dataset
 CheXpert: https://arxiv.org/abs/1901.07031
 
+We have included a subset of Dataset in this repo for CSE 6250 Evaluation Purpose.
+
 Dataset can be downloaded from here: http://download.cs.stanford.edu/deep/CheXpert-v1.0-small.zip
 
 Note: Please note that you need to subscribe to CheXpert website to download the dataset: https://stanfordmlgroup.github.io/competitions/chexpert/
