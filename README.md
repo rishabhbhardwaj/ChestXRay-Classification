@@ -79,7 +79,7 @@ Below is the model comparison for the 5 classes ('Atelectasis', 'Cardiomegaly', 
 | Consolidation    	| 0.923713    	| 0.853493     	|
 | Edema            	| 0.918155    	| 0.925000     	|
 | Pleural Effusion 	| 0.910326    	| 0.932858     	|
-| Mean AUROC       	| 0.876953    	| 0.863474     	|
+| **Mean AUROC**       	| **0.876953**    	| **0.863474**     	|
 
 
 ## Code Structure
