@@ -19,6 +19,11 @@ NAsNet4 -> classifier (sigmoid activation function per class)
 ## Dataset
 CheXpert: https://arxiv.org/abs/1901.07031
 
+## Models
+Model which is submitted to [CheXpert competition](https://stanfordmlgroup.github.io/competitions/chexpert/) is available at dir: ```codalab/src/best_weights_1555865398.1238055_Apr22_5cls.h5```
+
+Currently, **We are placed 4th (fourth) in the competition**.
+
 ## Set Up
 ```
 pip install -r requirements.txt
@@ -38,6 +43,9 @@ python src/test.py --data-dir <Dir Containing CheXpert Data> --model-file-path <
 ```
 
 ## Results
+
+Below is the model comparison for the 5 classes ('Atelectasis', 'Cardiomegaly', 'Consolidation', 'Edema', 'Pleural Effusion')
+
 | Class\Models     	| DenseNet121 	| NASNet-Large 	|
 |------------------	|-------------	|--------------	|
 | Atelectasis      	| 0.808819    	| 0.805774     	|
