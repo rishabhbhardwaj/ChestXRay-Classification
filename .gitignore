@@ -1,7 +1,7 @@
 .idea
 .ipynb_checkpoints
 
-CheXpert-v1.0-small
+#CheXpert-v1.0-small
 out
 
 src/__pycache__
