@@ -44,7 +44,7 @@ pip install -r requirements_eval.txt
 Run the model:
 
 ```
-cd root directory
+cd <root directory>
 python src/test.py
 ```
 
